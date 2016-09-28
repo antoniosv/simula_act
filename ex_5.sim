@@ -5,6 +5,8 @@ BEGIN
   REF(Rdist) varConnectionTime, conversationTime, nextCall;
   REAL maxConnectionTime, fixedConnectionTime, disconnectionTime, avgVarConnectionTime, avgConversationTime, avgNextCall, simTime;
   
+  REAL timeInterrupted, startTime;
+  
   Entity CLASS Subscriber;
   BEGIN
     ref(Timer) timer_;
@@ -15,17 +17,14 @@ BEGIN
       timer_.interrupt(1);
   END;
   
-  Entity CLASS Timer(p_);ref(Subscriber) p_;
+  Entity CLASS Timer(p_); REF(Subscriber) p_;
   BEGIN
+    startTime:= Time;
     Hold(200);
-    IF interruped = 1 THEN BEGIN
-      OutText("TIMER INTERRUPTED!");
-      OutInt(interrupted);
-    END
-    ELSE BEGIN
-      OutText("TIMER NOT INTERRUPTED!");
-      OutInt(interrupted);
-    END;
+    IF interrupted = 1 THEN 
+    BEGIN
+      timeInterrupted:= Time - startTime;
+    END;    
   END;
 
   ! NEED TO INITIALIZE THE DISTRIBUTIONS WITH N.E.D. CLASS ;
@@ -37,6 +36,12 @@ BEGIN
   disconnectionTime:= 0.2;	! 200 ms	;
   avgVarConnectionTime:= 3;	! 3 seconds	;
   avgConversationTime:= 3*60;	! 3 minutes	;
+  
+  Hold(simTime);
+  
+  OutText("Interrupted at: ");
+  OutFix(timeInterrupted, 5, 10);
+  outImage;
   
   END;
 END;
