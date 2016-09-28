@@ -1,0 +1,42 @@
+BEGIN
+  EXTERNAL CLASS demos = "/usr/local/share/cim/demos.atr";
+  demos BEGIN
+  
+  REF(Rdist) varConnectionTime, conversationTime, nextCall;
+  REAL maxConnectionTime, fixedConnectionTime, disconnectionTime, avgVarConnectionTime, avgConversationTime, avgNextCall, simTime;
+  
+  Entity CLASS Subscriber;
+  BEGIN
+    ref(Timer) timer_;
+      timer_ :- new Timer("datimer", THIS Subscriber);
+      timer_.schedule(0.0);
+      
+      Hold(150);
+      timer_.interrupt(1);
+  END;
+  
+  Entity CLASS Timer(p_);ref(Subscriber) p_;
+  BEGIN
+    Hold(200);
+    IF interruped = 1 THEN BEGIN
+      OutText("TIMER INTERRUPTED!");
+      OutInt(interrupted);
+    END
+    ELSE BEGIN
+      OutText("TIMER NOT INTERRUPTED!");
+      OutInt(interrupted);
+    END;
+  END;
+
+  ! NEED TO INITIALIZE THE DISTRIBUTIONS WITH N.E.D. CLASS ;
+  
+  simTime:= 30*24*60*60; 	! 30 days	;
+  avgNextCall:= 30*60; 		! 30 minutes	;
+  maxConnectionTime:= 15;	! 15 seconds	;
+  fixedConnectionTime:= 0.2;	! 200 ms	;
+  disconnectionTime:= 0.2;	! 200 ms	;
+  avgVarConnectionTime:= 3;	! 3 seconds	;
+  avgConversationTime:= 3*60;	! 3 minutes	;
+  
+  END;
+END;
